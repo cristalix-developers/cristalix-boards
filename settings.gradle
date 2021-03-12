@@ -1,0 +1,6 @@
+rootProject.name = 'cristalix-boards'
+
+include 'boards-data'
+include 'boards-client-mod'
+include 'boards-bukkit-api'
+

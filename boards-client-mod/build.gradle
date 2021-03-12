@@ -1,0 +1,55 @@
+buildscript {
+    repositories {
+        google()
+        jcenter()
+        maven {
+            url "https://repo.implario.dev/public"
+        }
+    }
+    dependencies {
+        classpath("ru.cristalix:bundler:2.1.4")
+    }
+}
+
+
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.4.30'
+}
+
+apply plugin: 'ru.cristalix.uiengine.bundler'
+
+
+bundler.name = "Leaderboards"
+bundler.mainClass = "ru.cristalix.boards.mod.BoardMod"
+bundler.version = "3.0"
+bundler.author = "DelfikPro"
+
+afterEvaluate {
+    tasks.getByName("jarFlattened").doFirst {
+        dontobfuscate()
+        keep('class ru.cristalix.boards.data.** { *; }')
+    }
+}
+
+repositories {
+    maven {
+        url 'https://repo.implario.dev/public/'
+    }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.4.30"
+
+    compileOnly 'dev.xdark:clientapi:1.0.5'
+    compileOnly 'org.lwjgl.lwjgl:lwjgl:2.9.3'
+    compileOnly 'org.lwjgl.lwjgl:lwjgl_util:2.9.3'
+
+    implementation 'ru.cristalix:uiengine:3.3.17'
+    implementation project(':boards-data')
+}
+
+
+jar {
+    from configurations.runtimeClasspath.collect { it.directory ? it : zipTree(it) }
+}
+

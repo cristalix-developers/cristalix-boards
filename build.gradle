@@ -1,0 +1,32 @@
+apply plugin: 'java'
+
+subprojects {
+    apply plugin: 'java'
+
+    repositories {
+        mavenCentral()
+        mavenLocal()
+        maven {
+            url 'https://repo.implario.dev/public'
+        }
+        maven {
+            url 'https://repo.implario.dev/cristalix'
+            credentials {
+                username System.getenv('IMPLARIO_REPO_USER')
+                password System.getenv('IMPLARIO_REPO_PASSWORD')
+            }
+        }
+    }
+
+    dependencies {
+
+        compileOnly 'io.netty:netty-buffer:4.1.58.Final'
+        compileOnly 'org.projectlombok:lombok:1.18.16'
+        annotationProcessor 'org.projectlombok:lombok:1.18.16'
+        compileOnly 'dev.xdark:feder:1.0-SNAPSHOT'
+        compileOnly 'com.google.code.gson:gson:2.8.6'
+
+    }
+
+
+}

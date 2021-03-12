@@ -1,4 +1,0 @@
-main: ru.cristalix.boards.bukkitapi.Boards
-version: 1
-name: boards
-depend: [CoreAPI, HeartwarmingPlace]

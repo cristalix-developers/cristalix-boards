@@ -7,24 +7,27 @@ import net.minecraft.server.v1_12_R1.PacketDataSerializer;
 import net.minecraft.server.v1_12_R1.PacketPlayOutCustomPayload;
 import org.apache.commons.io.IOUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import ru.cristalix.core.display.DisplayChannels;
 import ru.cristalix.core.display.messages.Mod;
 
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class Boards implements Listener {
 
     public static final List<Board> boards = new ArrayList<>();
-    public static final Set<CraftPlayer> active = new HashSet<>();
+    public static final Set<Player> active = new HashSet<>();
     private static Plugin plugin;
 
     public static Board newBoard() {
@@ -37,7 +40,7 @@ public class Boards implements Listener {
         plugin = JavaPlugin.getProvidingPlugin(Boards.class);
         Bukkit.getPluginManager().registerEvents(new Boards(), plugin);
         Bukkit.getMessenger().registerIncomingPluginChannel(plugin, "boards:loaded", (channel, player, data) -> {
-            active.add((CraftPlayer) player);
+            active.add(player);
             for (Board board : boards) {
                 if (board.getLocation().getWorld() == player.getWorld()) {
                     board.updateStructure(player);
@@ -56,6 +59,11 @@ public class Boards implements Listener {
         PacketDataSerializer ds = new PacketDataSerializer(buf);
         PacketPlayOutCustomPayload packet = new PacketPlayOutCustomPayload(DisplayChannels.MOD_CHANNEL, ds);
         ((CraftPlayer) e.getPlayer()).getHandle().playerConnection.sendPacket(packet);
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent e) {
+        active.remove(e.getPlayer());
     }
 
     @EventHandler

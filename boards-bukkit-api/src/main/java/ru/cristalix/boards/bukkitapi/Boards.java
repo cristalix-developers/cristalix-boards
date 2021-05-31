@@ -3,6 +3,7 @@ package ru.cristalix.boards.bukkitapi;
 import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import lombok.val;
 import net.minecraft.server.v1_12_R1.PacketDataSerializer;
 import net.minecraft.server.v1_12_R1.PacketPlayOutCustomPayload;
 import org.apache.commons.io.IOUtils;
@@ -68,10 +69,11 @@ public class Boards implements Listener {
 
     @EventHandler
     public void onAddToWorld(EntityAddToWorldEvent event) {
-        System.out.println(event.entity);
         if (!(event.getEntity() instanceof CraftPlayer)) return;
         CraftPlayer player = (CraftPlayer) event.getEntity();
         if (!active.contains(player)) return;
+        val packet = new PacketPlayOutCustomPayload("boards:reset", new PacketDataSerializer(Unpooled.buffer()));
+        player.getHandle().playerConnection.sendPacket(packet);
         for (Board board : boards) {
             board.updateStructure(player);
             board.updateContent(player);

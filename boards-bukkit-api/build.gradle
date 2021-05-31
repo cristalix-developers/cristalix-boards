@@ -42,7 +42,7 @@ publishing {
         create('bukkitApi', MavenPublication) {
             it.groupId 'ru.cristalix'
             it.artifactId 'boards-bukkit-api'
-            it.version '3.0.0'
+            it.version '3.0.4'
             it.artifact jar
         }
     }

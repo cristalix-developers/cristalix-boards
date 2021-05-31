@@ -4,23 +4,26 @@ import com.google.gson.Gson
 import dev.xdark.clientapi.ClientApi
 import dev.xdark.clientapi.entry.ModMain
 import dev.xdark.clientapi.event.network.PluginMessage
+import dev.xdark.clientapi.event.render.GuiOverlayRender
 import dev.xdark.feder.NetUtil
 import io.netty.buffer.Unpooled
 import ru.cristalix.boards.data.BoardContent
 import ru.cristalix.boards.data.BoardStructure
+import ru.cristalix.clientapi.KotlinMod
+import ru.cristalix.clientapi.readUtf8
 import ru.cristalix.uiengine.UIEngine
 import java.nio.ByteBuffer
 import java.util.*
 import kotlin.collections.HashMap
 
-class BoardMod : ModMain {
+class BoardMod : KotlinMod() {
 
     val gson = Gson()
     val boards: MutableMap<UUID, Board> = HashMap()
 
-    override fun load(clientApi: ClientApi) {
+    override fun onEnable() {
 
-        UIEngine.initialize(clientApi)
+        UIEngine.initialize(this)
 
 //        val info = BoardInfo(
 //            UUID.randomUUID(),
@@ -33,26 +36,25 @@ class BoardMod : ModMain {
 
         clientApi.clientConnection().sendPayload("boards:loaded", Unpooled.EMPTY_BUFFER)
 
-        val listener = clientApi.messageBus().createListener()
-
-        clientApi.messageBus().register(listener, PluginMessage::class.java, {
-            if (it.channel == "boards:new") {
-                val readUtf8 = NetUtil.readUtf8(it.data)
-                val boardInfo = gson.fromJson(readUtf8, BoardStructure::class.java)
-                val board = Board(boardInfo)
-                boards[boardInfo.uuid] = board
-                UIEngine.worldContexts.add(board.context)
+        registerChannel("boards:new") {
+            val readUtf8 = readUtf8()
+            val boardInfo = gson.fromJson(readUtf8, BoardStructure::class.java)
+            val board = Board(boardInfo)
+            boards[boardInfo.uuid] = board
+            UIEngine.worldContexts.add(board.context)
+        }
+        registerChannel("boards:content") {
+            val boardData = gson.fromJson(readUtf8(), BoardContent::class.java)
+            val board = boards[boardData.boardId]
+            if (board == null) {
+                clientApi.chat().printChatMessage("Received board update for non-existing board " + boardData.boardId)
+            } else {
+                board.setContent(boardData)
             }
-            if (it.channel == "boards:content") {
-                val boardData = gson.fromJson(NetUtil.readUtf8(it.data), BoardContent::class.java)
-                val board = boards[boardData.boardId]
-                if (board == null) {
-                    clientApi.chat().printChatMessage("Received board update for non-existing board " + boardData.boardId)
-                } else {
-                    board.setContent(boardData)
-                }
-            }
-        }, 1)
+        }
+        registerChannel("boards:reset") {
+            UIEngine.worldContexts.clear()
+        }
 
 
 //        val board = Board(info)
@@ -109,10 +111,6 @@ class BoardMod : ModMain {
 //            )
 //        )
 
-
-    }
-
-    override fun unload() {
 
     }
 

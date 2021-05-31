@@ -1,6 +1,5 @@
 package ru.cristalix.boards.mod
 
-import dev.xdark.clientapi.opengl.GlStateManager
 import org.lwjgl.opengl.GL11
 import ru.cristalix.boards.data.BoardContent
 import ru.cristalix.boards.data.BoardStructure
@@ -9,9 +8,7 @@ import ru.cristalix.uiengine.element.RectangleElement
 import ru.cristalix.uiengine.element.TextElement
 import ru.cristalix.uiengine.utility.*
 import java.util.*
-import javax.xml.soap.Text
 import kotlin.math.max
-import kotlin.math.min
 
 class Board(
     private val structure: BoardStructure
@@ -36,10 +33,11 @@ class Board(
             GL11.glEnable(GL11.GL_STENCIL_TEST)
             GL11.glStencilMask(0xFF)
             GL11.glStencilFunc(GL11.GL_ALWAYS, 0, 0xFF)
-            GL11.glStencilOp(GL11.GL_INCR, GL11.GL_INCR, GL11.GL_INCR)
+            GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_INCR)
         }
         afterRender = {
             GL11.glDisable(GL11.GL_STENCIL_TEST)
+            GL11.glStencilMask(0)
         }
     }
 
@@ -73,7 +71,7 @@ class Board(
         context.addChild(body, *titles)
     }
 
-    private fun toBlackText(string: String) = "¨222200§l" + string.replace(Regex("(§.|¨......)"), "")
+    private fun toBlackText(string: String) = "¨222200" + string.replace(Regex("(§[0-9a-fA-F]|¨......)"), "¨222200")
 
     fun setContent(content: BoardContent) {
 

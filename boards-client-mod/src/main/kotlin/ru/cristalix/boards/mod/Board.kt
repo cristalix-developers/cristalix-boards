@@ -65,6 +65,7 @@ class Board(
 
     init {
         context.rotation = Rotation(structure.yaw.toDouble() / 180.0 * Math.PI, 0.0, -1.0, 0.0)
+//        context.rotation = Rotation(0 / 180.0 * Math.PI, 0.0, -1.0, 0.0)
         context.scale.x *= 0.5
         context.scale.y *= 0.5
         context.scale.z *= 0.5
@@ -115,7 +116,7 @@ class Board(
                             GL11.glEnable(GL11.GL_CULL_FACE)
                         }
                         offset.z = -0.5
-                        this.content = cellValue
+                        this.content = "" + cellValue
                         origin = Relative.CENTER
                         align = Relative.CENTER
                     })

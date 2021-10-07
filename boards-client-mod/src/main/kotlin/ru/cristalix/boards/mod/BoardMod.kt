@@ -1,18 +1,12 @@
 package ru.cristalix.boards.mod
 
 import com.google.gson.Gson
-import dev.xdark.clientapi.ClientApi
-import dev.xdark.clientapi.entry.ModMain
-import dev.xdark.clientapi.event.network.PluginMessage
-import dev.xdark.clientapi.event.render.GuiOverlayRender
-import dev.xdark.feder.NetUtil
 import io.netty.buffer.Unpooled
 import ru.cristalix.boards.data.BoardContent
 import ru.cristalix.boards.data.BoardStructure
 import ru.cristalix.clientapi.KotlinMod
 import ru.cristalix.clientapi.readUtf8
 import ru.cristalix.uiengine.UIEngine
-import java.nio.ByteBuffer
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -38,13 +32,16 @@ class BoardMod : KotlinMod() {
 
         registerChannel("boards:new") {
             val readUtf8 = readUtf8()
+//            println("New board: $readUtf8")
             val boardInfo = gson.fromJson(readUtf8, BoardStructure::class.java)
             val board = Board(boardInfo)
             boards[boardInfo.uuid] = board
             UIEngine.worldContexts.add(board.context)
         }
         registerChannel("boards:content") {
-            val boardData = gson.fromJson(readUtf8(), BoardContent::class.java)
+            val content = readUtf8()
+//            println("Board content: $content")
+            val boardData = gson.fromJson(content, BoardContent::class.java)
             val board = boards[boardData.boardId]
             if (board == null) {
                 clientApi.chat().printChatMessage("Received board update for non-existing board " + boardData.boardId)
@@ -53,6 +50,7 @@ class BoardMod : KotlinMod() {
             }
         }
         registerChannel("boards:reset") {
+            println("Reset boards")
             UIEngine.worldContexts.clear()
         }
 

@@ -12,7 +12,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'ru.cristalix:boards-bukkit-api:3.0.0'
+    implementation 'ru.cristalix:boards-bukkit-api:3.0.16'
 }
 ```
 

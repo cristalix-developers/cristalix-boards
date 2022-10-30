@@ -3,10 +3,10 @@ apply plugin: 'maven-publish'
 repositories {
 
     maven {
-        url 'https://repo.implario.dev/cristalix'
+        url 'https://repo.c7x.dev/repository/maven-public/'
         credentials {
-            username System.getenv('IMPLARIO_REPO_USER')
-            password System.getenv('IMPLARIO_REPO_PASSWORD')
+            username = System.getenv 'CRI_REPO_USER'
+            password = System.getenv 'CRI_REPO_PASSWORD'
         }
     }
 }
@@ -30,11 +30,10 @@ jar {
 publishing {
     repositories {
         maven {
-            name 'implario'
-            url 'https://repo.implario.dev/public'
+            url 'https://repo.c7x.dev/repository/maven-releases/'
             credentials {
-                username System.getenv('IMPLARIO_REPO_USER')
-                password System.getenv('IMPLARIO_REPO_PASSWORD')
+                username = System.getenv 'CRI_REPO_USER'
+                password = System.getenv 'CRI_REPO_PASSWORD'
             }
         }
     }
@@ -42,7 +41,7 @@ publishing {
         create('bukkitApi', MavenPublication) {
             it.groupId 'ru.cristalix'
             it.artifactId 'boards-bukkit-api'
-            it.version '3.0.12'
+            it.version '3.0.16'
             it.artifact jar
         }
     }

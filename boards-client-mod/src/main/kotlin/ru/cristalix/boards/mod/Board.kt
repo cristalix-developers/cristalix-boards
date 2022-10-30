@@ -3,8 +3,8 @@ package ru.cristalix.boards.mod
 import org.lwjgl.opengl.GL11
 import ru.cristalix.boards.data.BoardContent
 import ru.cristalix.boards.data.BoardStructure
+import ru.cristalix.uiengine.element.CarvedRectangle
 import ru.cristalix.uiengine.element.Context3D
-import ru.cristalix.uiengine.element.RectangleElement
 import ru.cristalix.uiengine.element.TextElement
 import ru.cristalix.uiengine.utility.*
 import java.util.*
@@ -18,7 +18,7 @@ class Board(
 
     val context: Context3D = Context3D(V3(structure.x, structure.y, structure.z))
 
-    private val body: RectangleElement = rectangle {
+    private val body: CarvedRectangle = carved {
 
         var width = -2.0
         structure.columns.forEach {
@@ -94,7 +94,7 @@ class Board(
 ////                    rotation = Rotation(Math.PI, 0.0, 1.0, 0.0)
 //
 //                })
-                body.addChild(rectangle {
+                body.addChild(carved {
 
 
                     beforeRender = {
